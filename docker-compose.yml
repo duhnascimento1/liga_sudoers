@@ -62,7 +62,7 @@ services:
       - metabase_db
 
   metabase_db:
-    image: postgres:13
+    image: postgres:14
     container_name: metabase_db
     environment:
       POSTGRES_USER: metabase
