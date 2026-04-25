@@ -12,9 +12,9 @@ except:
 
 # Definindo os parâmetros de conexão
 db_config = {
-    'dbname': 'liga_sudoers',
-    'user': 'sudoers',    
-    'password': 'password',
+    'dbname': 'postgres',
+    'user': 'postgres',    
+    'password': 'N@otemsenha2',
     'host': 'localhost',
     'port': '5434'
 }
