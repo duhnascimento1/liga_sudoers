@@ -1,8 +1,8 @@
 services:
 
-#### Container para Banco de Dados Transacional e Dimensional
+  # Banco transacional
   postgres_liga_sudoers:
-    image: postgres:latest
+    image: postgres:16
     container_name: postgres_liga_sudoers
     environment:
       POSTGRES_USER: sudoers
@@ -11,11 +11,11 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - pgdata_liga_sudoers:/var/lib/postgresql/data
-      - ./modelagem/ddl/liga_sudoers.sql:/docker-entrypoint-initdb.d/liga_sudoers.sql
+      - pgdata_liga_sudoers:/var/lib/postgresql
 
+  # Data Warehouse
   postgres_liga_sudoers_dw:
-    image: postgres:latest
+    image: postgres:16
     container_name: postgres_liga_sudoers_dw
     environment:
       POSTGRES_USER: sudoers
@@ -24,11 +24,9 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - pgdata_liga_sudoers_dw:/var/lib/postgresql/data_dw
-      - ./modelagem/ddl/liga_sudoers_dw.sql:/docker-entrypoint-initdb.d/liga_sudoers_dw.sql
+      - pgdata_liga_sudoers_dw:/var/lib/postgresql
 
-#### Container para ETL's 
-
+  # ETL
   etl_scripts:
     image: apache/hop-web:latest
     container_name: etl_scripts
@@ -37,15 +35,14 @@ services:
       - postgres_liga_sudoers_dw
     ports:
       - "8080:8080"
-    environment:      
-     - HOP_PROJECT_FOLDER=/files
-     - HOP_PROJECT_NAME=default
+    environment:
+      HOP_PROJECT_FOLDER: /files
+      HOP_PROJECT_NAME: default
     volumes:
       - ./etl_sudoers:/files
     working_dir: /files
 
-#### Container para Dashboards
-
+  # Metabase app
   metabase:
     image: metabase/metabase:latest
     container_name: metabase
@@ -61,6 +58,7 @@ services:
     depends_on:
       - metabase_db
 
+  # Banco do Metabase
   metabase_db:
     image: postgres:14
     container_name: metabase_db
@@ -75,6 +73,6 @@ services:
       - ./dashboard/metabase_db/metabase_backup.sql:/docker-entrypoint-initdb.d/metabase_backup.sql
 
 volumes:
-  metabase_db_data:
   pgdata_liga_sudoers:
   pgdata_liga_sudoers_dw:
+  metabase_db_data:
